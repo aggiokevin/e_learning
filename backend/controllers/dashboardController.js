@@ -3,6 +3,7 @@ const { pool } = require('../config/database');
 exports.getTrainerDashboard = async (req, res) => {
   try {
     const trainerId = req.user.id;
+    // console.log('Fetching dashboard for trainer ID:', trainerId);
 
     // Récupérer les cours du formateur
     const [courses] = await pool.query(`

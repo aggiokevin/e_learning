@@ -42,3 +42,14 @@ exports.updateUser = async (req, res) => {
     res.status(500).json({ error: 'Erreur serveur' });
   }
 };
+
+exports.deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await pool.query('DELETE FROM users WHERE id = ?', [id]);
+    res.json({ message: 'Utilisateur supprimé' });
+  } catch (error) {
+    console.error('Erreur lors de la suppression:', error);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+};  

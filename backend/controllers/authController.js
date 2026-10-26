@@ -54,6 +54,10 @@ exports.login = async (req, res) => {
 
     // Recherche de l'utilisateur
     const [users] = await pool.query(
+      'SELECT * FROM users WHERE email = ?',
+      [email]
+    );
+    const [users_verify_active] = await pool.query(
       'SELECT * FROM users WHERE email = ? AND is_active = TRUE',
       [email]
     );
@@ -61,6 +65,11 @@ exports.login = async (req, res) => {
     if (users.length === 0) {
       return res.status(401).json({ error: 'Email ou mot de passe incorrect' });
     }
+    
+    if (users_verify_active.length === 0) {
+      return res.status(401).json({ error: 'compte inactif' });
+    }
+    
 
     const user = users[0];
 

@@ -31,6 +31,7 @@ const CourseDetails = () => {
     try {
       const response = await coursesAPI.getById(id);
       setCourse(response.data.course);
+      console.log('Course details:', response.data.course);
     } catch (error) {
       toast.error('Erreur lors du chargement du cours');
       navigate('/courses');
@@ -144,7 +145,11 @@ const CourseDetails = () => {
               <Card className="sticky top-4">
                 <div className="aspect-video bg-gray-200 rounded-lg mb-4 overflow-hidden">
                   <img 
-                    src={course.thumbnail_url || 'https://via.placeholder.com/400x300'} 
+                    src={
+    course.image_url
+      ? `${"http://localhost:5000"}${course.image_url}`
+      : 'https://via.placeholder.com/400x300'
+  }
                     alt={course.title}
                     className="w-full h-full object-cover"
                   />

@@ -68,7 +68,7 @@ const Register = () => {
     setIsLoading(false);
     
     if (success) {
-      navigate('/dashboard');
+      navigate('/login');
     }
   };
 

@@ -23,6 +23,11 @@ const CourseLesson = () => {
     fetchCourseAndProgress();
   }, [id]);
 
+  const getEmbedUrl = (url) => {
+  return url.replace('/watch/', '/embed/');
+};
+
+
   const fetchCourseAndProgress = async () => {
     try {
       const [courseRes, progressRes] = await Promise.all([
@@ -36,10 +41,12 @@ const CourseLesson = () => {
       // Set first lesson as current
       if (courseRes.data.course.modules?.length > 0) {
         const firstModule = courseRes.data.course.modules[0];
+        // console.log('First Module:', firstModule);
         if (firstModule.lessons?.length > 0) {
           setCurrentModule(firstModule);
-          setCurrent
-Lesson(firstModule.lessons[0]);
+// Lesson(firstModule.lessons[0]);
+setCurrentLesson(firstModule.lessons[0]);
+ console.log('First Lesson:', firstModule.lessons[0]);
         }
       }
     } catch (error) {
@@ -134,10 +141,10 @@ Lesson(firstModule.lessons[0]);
       case 'video':
         return (
           <div className="aspect-video bg-gray-900 rounded-lg overflow-hidden">
-            {currentLesson.content_url_or_text?.includes('youtube') ? (
+            {currentLesson.content_url_or_text?.includes('wetube') ? (
               <iframe
                 className="w-full h-full"
-                src={currentLesson.content_url_or_text}
+                src={getEmbedUrl(currentLesson.content_url_or_text)}
                 title={currentLesson.title}
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -291,7 +298,7 @@ Lesson(firstModule.lessons[0]);
                 
                 {lessonStatus !== 'completed' && (
                   <Button
-                    onClick={() => markLessonComplete(currentLesson?.id)}
+                    onClick={() => markLessonComplete(currentLesson.id)}
                     variant="outline"
                     size="sm"
                   >
@@ -355,9 +362,9 @@ Lesson(firstModule.lessons[0]);
                   <p className="text-gray-600 mb-4">
                     Félicitations ! Vous avez terminé ce module.
                   </p>
-                  <Button variant="coral" onClick={() => setShowQuiz(true)}>
+                  {/* <Button variant="coral" onClick={() => setShowQuiz(true)}>
                     Passer au quiz
-                  </Button>
+                  </Button> */}
                 </div>
               </Card>
             )}

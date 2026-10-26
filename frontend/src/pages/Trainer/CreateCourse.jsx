@@ -13,9 +13,12 @@ const CreateCourse = () => {
     title: '',
     description: '',
     level: 'débutant',
-    category: '',
-    thumbnail_url: ''
+    category: ''
   });
+  
+  // NOUVEAUX ÉTATS pour gérer l'image
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
 
   const categories = [
     'Développement', 'Marketing', 'Design', 'Bureautique', 
@@ -31,12 +34,62 @@ const CreateCourse = () => {
     });
   };
 
+  // NOUVELLE FONCTION pour gérer le changement de fichier image
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    
+    if (file) {
+      // Vérifier que c'est une image
+      if (!file.type.startsWith('image/')) {
+        toast.error('Veuillez sélectionner un fichier image valide');
+        return;
+      }
+      
+      // Vérifier la taille (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('L\'image ne doit pas dépasser 5MB');
+        return;
+      }
+      
+      setImageFile(file);
+      
+      // Créer un aperçu de l'image
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // FONCTION MODIFIÉE pour supprimer l'image
+  const handleRemoveImage = () => {
+    setImageFile(null);
+    setImagePreview(null);
+  };
+
+  // FONCTION SUBMIT MODIFIÉE pour envoyer FormData
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Vérifier qu'une image a été sélectionnée
+    if (!imageFile) {
+      toast.error('Veuillez sélectionner une image pour le cours');
+      return;
+    }
+    
     setLoading(true);
 
     try {
-      const response = await coursesAPI.create(formData);
+      // Créer un FormData au lieu d'un objet JSON
+      const data = new FormData();
+      data.append('title', formData.title);
+      data.append('description', formData.description);
+      data.append('level', formData.level);
+      data.append('category', formData.category);
+      data.append('image', imageFile); // Ajouter le fichier image
+
+      const response = await coursesAPI.create(data);
       toast.success('Cours créé avec succès !');
       navigate(`/trainer/courses/${response.data.courseId}`);
     } catch (error) {
@@ -119,13 +172,81 @@ const CreateCourse = () => {
               </div>
             </div>
 
-            <Input
-              label="URL de l'image (optionnel)"
-              name="thumbnail_url"
-              value={formData.thumbnail_url}
-              onChange={handleChange}
-              placeholder="https://example.com/image.jpg"
-            />
+            {/* SECTION IMAGE MODIFIÉE - Upload de fichier */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Image du cours <span className="text-red-500">*</span>
+              </label>
+              
+              {!imagePreview ? (
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-primary-500 transition">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="hidden"
+                    id="image-upload"
+                  />
+                  <label 
+                    htmlFor="image-upload" 
+                    className="cursor-pointer"
+                  >
+                    <div className="flex flex-col items-center">
+                      <svg 
+                        className="w-12 h-12 text-gray-400 mb-3" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        viewBox="0 0 24 24"
+                      >
+                        <path 
+                          strokeLinecap="round" 
+                          strokeLinejoin="round" 
+                          strokeWidth={2} 
+                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" 
+                        />
+                      </svg>
+                      <p className="text-sm text-gray-600 mb-1">
+                        Cliquez pour télécharger une image
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        PNG, JPG, GIF jusqu'à 5MB
+                      </p>
+                    </div>
+                  </label>
+                </div>
+              ) : (
+                <div className="relative">
+                  <img
+                    src={imagePreview}
+                    alt="Aperçu du cours"
+                    className="w-full h-64 object-cover rounded-lg border border-gray-300"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleRemoveImage}
+                    className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition shadow-lg"
+                  >
+                    <svg 
+                      className="w-5 h-5" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24"
+                    >
+                      <path 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round" 
+                        strokeWidth={2} 
+                        d="M6 18L18 6M6 6l12 12" 
+                      />
+                    </svg>
+                  </button>
+                  <div className="mt-2 text-sm text-gray-600">
+                    <p>📁 {imageFile?.name}</p>
+                    <p>📊 {(imageFile?.size / 1024).toFixed(2)} KB</p>
+                  </div>
+                </div>
+              )}
+            </div>
 
             <div className="flex gap-4">
               <Button
@@ -138,7 +259,7 @@ const CreateCourse = () => {
               <Button
                 type="submit"
                 variant="primary"
-                disabled={loading}
+                disabled={loading || !imageFile}
               >
                 {loading ? 'Création...' : 'Créer le cours'}
               </Button>

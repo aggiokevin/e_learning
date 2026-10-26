@@ -19,6 +19,7 @@ const TrainerDashboard = () => {
     try {
       const response = await dashboardAPI.getTrainerStats();
       setCourses(response.data.courses);
+      
     } catch (error) {
       toast.error('Erreur lors du chargement des statistiques');
     } finally {
@@ -42,7 +43,7 @@ const TrainerDashboard = () => {
           <Link to="/trainer/create-course">
             <Button variant="primary">
               <Plus size={20} className="mr-2" />
-              Créer un cours
+                Créer un cours
             </Button>
           </Link>
         </div>

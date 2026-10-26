@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { GraduationCap, Mail, Phone, MapPin } from 'lucide-react';
 
-const Footer = () => {
+const Footer = ({ contactRef }) => {
   return (
     <footer className="bg-gray-900 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -34,11 +34,11 @@ const Footer = () => {
 
           {/* Contact */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Contact</h3>
+            <h3 id='contact' ref={contactRef} className="text-lg font-semibold mb-4">Contact</h3>
             <ul className="space-y-2">
               <li className="flex items-center text-gray-400">
                 <Mail size={16} className="mr-2" />
-                contact@formapro.fr
+                contact@aretex.ca
               </li>
               <li className="flex items-center text-gray-400">
                 <Phone size={16} className="mr-2" />

@@ -7,27 +7,67 @@ export default {
   theme: {
     extend: {
       colors: {
+        /* === EXISTANT (NE PAS TOUCHER) === */
         primary: {
-          50: '#eff6ff',
-          100: '#dbeafe',
-          200: '#bfdbfe',
-          300: '#93c5fd',
-          400: '#60a5fa',
-          500: '#3b82f6',
-          600: '#2563eb',
-          700: '#1d4ed8',
-          800: '#1e40af',
-          900: '#1e3a8a',
-        },
+  50:  'hsl(220 70% 95%)',
+  100: 'hsl(220 70% 90%)',
+  200: 'hsl(220 70% 80%)',
+  300: 'hsl(220 70% 70%)',
+  400: 'hsl(220 70% 60%)',
+  500: 'hsl(220 70% 45%)', // <-- correspond exactement à --primary
+  600: 'hsl(220 70% 40%)',
+  700: 'hsl(220 70% 32%)',
+  800: 'hsl(220 70% 25%)',
+  900: 'hsl(220 70% 18%)',
+},
+
         coral: {
-          400: '#fb923c',
-          500: '#f97316',
-          600: '#ea580c',
-        }
+  400: 'hsl(18 85% 65%)',
+  500: 'hsl(18 85% 60%)', // <-- correspond à --secondary
+  600: 'hsl(18 85% 50%)',
+},
+secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        /* === AJOUTS NÉCESSAIRES (design system CSS) === */
+        border: 'hsl(var(--border))',
+        input: 'hsl(var(--input))',
+        ring: 'hsl(var(--ring))',
+
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
+
+        card: 'hsl(var(--card))',
+        'card-foreground': 'hsl(var(--card-foreground))',
+
+        muted: 'hsl(var(--muted))',
+        'muted-foreground': 'hsl(var(--muted-foreground))',
+
+        success: {
+          DEFAULT: 'hsl(var(--success))',
+          foreground: 'hsl(var(--success-foreground))',
+        },
+
+        accent: {
+          DEFAULT: 'hsl(var(--accent))',
+          foreground: 'hsl(var(--accent-foreground))',
+        },
+
+        destructive: {
+          DEFAULT: 'hsl(var(--destructive))',
+          foreground: 'hsl(var(--destructive-foreground))',
+        },
       },
+
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
-      }
+      },
+
+      borderRadius: {
+        lg: 'var(--radius)',
+        xl: 'calc(var(--radius) + 4px)',
+      },
     },
   },
   plugins: [],

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { coursesAPI } from '../../services/api';
 import CourseCard from '../../components/Course/CourseCard';
 import { Search, Filter } from 'lucide-react';
+// import CourseEditor from './CourseEditor';
 import toast from 'react-hot-toast';
 
 const CourseCatalog = () => {
@@ -25,6 +26,7 @@ const CourseCatalog = () => {
       setLoading(true);
       const response = await coursesAPI.getAll(filters);
       setCourses(response.data.courses);
+       console.log(response.data);
     } catch (error) {
       toast.error('Erreur lors du chargement des cours');
     } finally {

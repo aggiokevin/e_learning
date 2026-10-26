@@ -42,20 +42,22 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('user', JSON.stringify(user));
       setUser(user);
       toast.success('Connexion réussie !');
-      return true;
-    } catch (error) {
-      toast.error(error.response?.data?.error || 'Erreur de connexion');
-      return false;
-    }
+      return { success: true, user };
+  } catch (error) {
+    return {
+      success: false,
+      error: error.response?.data?.error || 'Erreur de connexion',
+    };
+  }
   };
 
   const register = async (name, email, password, bio, role) => {
     try {
       const response = await authAPI.register({ name, email, password, bio, role });
-      const { token, user } = response.data;
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(user));
-      setUser(user);
+      // const { token, user } = response.data;
+      // localStorage.setItem('token', token);
+      // localStorage.setItem('user', JSON.stringify(user));
+      // setUser(user);
       toast.success('Compte créé avec succès !');
       return true;
     } catch (error) {

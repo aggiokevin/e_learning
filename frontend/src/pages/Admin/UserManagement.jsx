@@ -42,6 +42,46 @@ const UserManagement = () => {
     setShowEditModal(true);
   };
 
+  const confirmDeleteUser = (user, onConfirm) => {
+  toast((t) => (
+    <div className="flex flex-col gap-3">
+      <p className="text-sm">
+        Supprimer l'utilisateur <span className="font-semibold">{user.name}</span> ?
+      </p>
+      <div className="flex justify-end gap-2">
+        <button
+          onClick={() => toast.dismiss(t.id)}
+          className="px-3 py-1 text-xs rounded border border-gray-300 text-gray-700 hover:bg-gray-100"
+        >
+          Annuler
+        </button>
+        <button
+          onClick={async () => {
+            toast.dismiss(t.id);
+            await onConfirm();
+          }}
+          className="px-3 py-1 text-xs rounded bg-red-600 text-white hover:bg-red-700"
+        >
+          Supprimer
+        </button>
+      </div>
+    </div>
+  ), { duration: 8000 });
+};
+
+  const handleDeleteUser = async (user) => {
+  confirmDeleteUser(user, async () => {
+    try {
+      await usersAPI.delete(user.id);
+      toast.success('Utilisateur supprimé avec succès');
+      // recharger la liste
+      fetchUsers();
+    } catch (error) {
+      toast.error("Erreur lors de la suppression de l'utilisateur");
+    }
+  });
+};
+
   const handleSaveUser = async (e) => {
     e.preventDefault();
     try {
@@ -76,10 +116,10 @@ const UserManagement = () => {
             <h1 className="text-3xl font-bold text-gray-900">Gestion des utilisateurs</h1>
             <p className="text-gray-600 mt-1">{users.length} utilisateur(s) au total</p>
           </div>
-          <Button variant="primary">
+          {/* <Button variant="primary">
             <UserPlus size={20} className="mr-2" />
             Ajouter un utilisateur
-          </Button>
+          </Button> */}
         </div>
 
         {/* Search */}
@@ -145,7 +185,9 @@ const UserManagement = () => {
                           >
                             <Edit size={18} />
                           </button>
-                          <button className="text-red-600 hover:text-red-700">
+                          <button 
+                          onClick={() => handleDeleteUser(user)}
+                          className="text-red-600 hover:text-red-700">
                             <Trash2 size={18} />
                           </button>
                         </div>

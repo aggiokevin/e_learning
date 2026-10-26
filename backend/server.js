@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 require('dotenv').config();
 
 const { initDatabase } = require('./config/database');
@@ -9,10 +10,11 @@ const authRoutes = require('./routes/auth');
 const courseRoutes = require('./routes/courses');
 const enrollmentRoutes = require('./routes/enrollments');
 const progressRoutes = require('./routes/progress');
-const quizRoutes = require('./routes/quiz');
+// const quizRoutes = require('./routes/quiz');
 const chatbotRoutes = require('./routes/chatbot');
 const dashboardRoutes = require('./routes/dashboard');
 const userRoutes = require('./routes/users');
+const publishRoutes = require('./routes/course');
 
 const app = express();
 
@@ -21,15 +23,22 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Servir les fichiers statiques (IMPORTANT)
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api', enrollmentRoutes);
 app.use('/api', progressRoutes);
-app.use('/api', quizRoutes);
+// app.use('/api', quizRoutes);
+// Ajouter cette ligne avec les autres routes
+app.use('/api/quizzes', require('./routes/quiz'));
 app.use('/api/chatbot', chatbotRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/courses', publishRoutes);
+app.use('/api/analytics', require('./routes/analytics'));
 
 // Route de test
 app.get('/api/health', (req, res) => {

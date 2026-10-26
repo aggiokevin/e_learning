@@ -1,8 +1,9 @@
-import React from 'react';
+import { useRef } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import Navbar from './components/Layout/Navbar';
+// import Navbar from './components/Layout/Navbar';
+import Navbar from './pages/components/layout/Navbar';
 import Footer from './components/Layout/Footer';
 import ChatbotWidget from './components/Chatbot/ChatbotWidget';
 
@@ -20,6 +21,11 @@ import CreateCourse from './pages/Trainer/CreateCourse';
 import ManageCourse from './pages/Trainer/ManageCourse';
 import AdminDashboard from './pages/Admin/AdminDashboard';
 import UserManagement from './pages/Admin/UserManagement';
+import Analytics from './pages/Admin/analytics';
+import AdminCourses from './pages/Admin/AdminCourses';
+import Index from './pages/index';
+import About from './pages/components/home/about';
+import CreateQuiz from './pages/Trainer/createQuiz';
 
 // Protected Route Component
 const ProtectedRoute = ({ children, allowedRoles = [] }) => {
@@ -60,100 +66,132 @@ const DashboardRouter = () => {
 };
 
 function AppContent() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
+  
+  const contactRef = useRef(null);
+
+  const scrollToContact = () => {
+    contactRef.current?.scrollIntoView({ 
+      behavior: 'smooth', 
+      block: 'start' 
+    });
+  };  // ← Ajout
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Navbar />
+      <Toaster position="top-right" />
+      <Navbar scrollToContact={scrollToContact}/>
       <main className="flex-grow">
         <Routes>
           {/* Public Routes */}
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Index />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/courses" element={<CourseCatalog />} />
           <Route path="/courses/:id" element={<CourseDetails />} />
-          
+          <Route
+            path="/About"
+            element={<About />}
+          />
           {/* Protected Routes - All authenticated users */}
-          <Route 
-            path="/dashboard" 
+          <Route
+            path="/dashboard"
             element={
               <ProtectedRoute>
                 <DashboardRouter />
               </ProtectedRoute>
-            } 
+            }
           />
-          
-          <Route 
-            path="/courses/:id/learn" 
+          <Route
+            path="/courses/:id/learn"
             element={
               <ProtectedRoute>
                 <CourseLesson />
               </ProtectedRoute>
-            } 
+            }
           />
-
           {/* Student Routes */}
-          <Route 
-            path="/my-courses" 
+          <Route
+            path="/my-courses"
             element={
-              <ProtectedRoute allowedRoles={['TRAINEE']}>
+              <ProtectedRoute allowedRoles={["TRAINEE"]}>
                 <MyCourses />
               </ProtectedRoute>
-            } 
+            }
           />
-
           {/* Trainer Routes */}
-          <Route 
-            path="/trainer/dashboard" 
+          <Route
+            path="/trainer/dashboard"
             element={
-              <ProtectedRoute allowedRoles={['TRAINER', 'ADMIN']}>
+              <ProtectedRoute allowedRoles={["TRAINER", "ADMIN"]}>
                 <TrainerDashboard />
               </ProtectedRoute>
-            } 
+            }
           />
-          <Route 
-            path="/trainer/create-course" 
+          <Route
+            path="/trainer/create-course"
             element={
-              <ProtectedRoute allowedRoles={['TRAINER', 'ADMIN']}>
+              <ProtectedRoute allowedRoles={["TRAINER", "ADMIN"]}>
                 <CreateCourse />
               </ProtectedRoute>
-            } 
+            }
           />
-          <Route 
-            path="/trainer/courses/:id" 
+          <Route
+            path="/trainer/courses/:id"
             element={
-              <ProtectedRoute allowedRoles={['TRAINER', 'ADMIN']}>
+              <ProtectedRoute allowedRoles={["TRAINER", "ADMIN"]}>
                 <ManageCourse />
               </ProtectedRoute>
-            } 
+            }
           />
-
-          {/* Admin Routes */}
-          <Route 
-            path="/admin/dashboard" 
+          <Route
+            path="/trainer/quiz/create/:id"
             element={
-              <ProtectedRoute allowedRoles={['ADMIN']}>
+              <ProtectedRoute allowedRoles={["TRAINER", "ADMIN"]}>
+                <CreateQuiz />
+              </ProtectedRoute>
+            }
+          />
+          {/* Admin Routes */}
+          <Route
+            path="/admin/dashboard"
+            element={
+              <ProtectedRoute allowedRoles={["ADMIN"]}>
                 <AdminDashboard />
               </ProtectedRoute>
-            } 
+            }
           />
-          <Route 
-            path="/admin/users" 
+          <Route
+            path="/admin/analytics"
             element={
-              <ProtectedRoute allowedRoles={['ADMIN']}>
+              <ProtectedRoute allowedRoles={["ADMIN"]}>
+                <Analytics />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/users"
+            element={
+              <ProtectedRoute allowedRoles={["ADMIN"]}>
                 <UserManagement />
               </ProtectedRoute>
-            } 
+            }
           />
-
+          // Dans vos routes
+          <Route
+            path="/admin/courses"
+            element={
+              <ProtectedRoute allowedRoles={["ADMIN"]}>
+                <AdminCourses />
+              </ProtectedRoute>
+            }
+          />
           {/* Catch all - redirect to home */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
-      <Footer />
-      {isAuthenticated && <ChatbotWidget />}
-      <Toaster position="top-right" />
+      <Footer contactRef={contactRef}/>
+      {isAuthenticated && user?.role === "TRAINEE" && <ChatbotWidget />}
     </div>
   );
 }

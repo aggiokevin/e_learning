@@ -7,6 +7,7 @@ import Card from '../../components/Common/Card';
 import Modal from '../../components/Common/Modal';
 import Input from '../../components/Common/Input';
 import toast from 'react-hot-toast';
+import CourseEditor from './CourseEditor';
 
 const ManageCourse = () => {
   const { id } = useParams();
@@ -119,6 +120,7 @@ const ManageCourse = () => {
               <Plus size={20} className="mr-2" />
               Ajouter un module
             </Button>
+          <CourseEditor/>
           </div>
         </div>
 

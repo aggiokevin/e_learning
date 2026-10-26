@@ -5,6 +5,7 @@ import { Users, BookOpen, TrendingUp, Activity } from 'lucide-react';
 import StatCard from '../../components/Dashboard/StatCard';
 import Card from '../../components/Common/Card';
 import toast from 'react-hot-toast';
+import { getImageUrl } from '../../utils/imageUtils';
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState(null);

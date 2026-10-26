@@ -5,6 +5,7 @@ exports.updateProgress = async (req, res) => {
     const { lessonId } = req.params;
     const { status } = req.body;
     const userId = req.user.id;
+    console.log(`Updating progress for user ${userId}, lesson ${lessonId}, status: ${status}`);
 
     // Vérifier si la progression existe
     const [existing] = await pool.query(

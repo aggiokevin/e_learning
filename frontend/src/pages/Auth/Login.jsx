@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Input from '../../components/Common/Input';
 import Button from '../../components/Common/Button';
 import { GraduationCap } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const Login = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
+  const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -21,16 +23,26 @@ const Login = () => {
     });
   };
 
+  useEffect(() => {
+    if (errorMessage) {
+      toast.error(errorMessage, { duration: 4000 });
+    }
+  }, [errorMessage]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
-    const success = await login(formData.email, formData.password);
+    const { success, error } = await login(formData.email, formData.password);
     
     setIsLoading(false);
     
     if (success) {
       navigate('/dashboard');
+    }else {
+      // toast.error(error, { duration: 20000 });
+      // console.log(error);
+      setErrorMessage(error);
     }
   };
 
@@ -52,10 +64,9 @@ const Login = () => {
           </Link>
         </p>
       </div>
-
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form className="space-y-6" onSubmit={handleSubmit}>
             <Input
               label="Email"
               type="email"
