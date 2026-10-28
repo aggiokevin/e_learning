@@ -3,7 +3,7 @@ require('dotenv').config();
 
 const pool = mysql.createPool({
   user: process.env.DB_USER || 'free-trial-first-project',
-  password: process.env.DB_PASSWORD || '',
+  password: process.env.DB_PASSWORD || 124578,
   database: process.env.DB_NAME || 'formapro',
 
   socketPath: `/cloudsql/${process.env.INSTANCE_CONNECTION_NAME}`,
